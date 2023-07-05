@@ -4,12 +4,6 @@ const customfetch=async (url,{body,...customeConfig})=>{
     const headers={
         'content-type':'application/json',
         Accept:'application/json',
-        'Access-Control-Allow-Headers':
-          'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-        'Access-Control-Allow-Methods': 'OPTIONS,POST',
-        'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Origin': '*',
-        'X-Requested-With': '*',
     };
     if(token){
         headers.Authorization=`Bearer ${token}`;
@@ -20,6 +14,7 @@ const customfetch=async (url,{body,...customeConfig})=>{
             ...headers,
             ...customeConfig.headers
         },
+        // mode:'cors'
     }
     if(body){
         config.body=JSON.stringify(body);
@@ -27,7 +22,7 @@ const customfetch=async (url,{body,...customeConfig})=>{
     try{
         const response=await fetch(url,config);
         const data=await response.json();
-        if(response.success){
+        if(data.success){
             return{
                 data:data.data,
                 success:true
@@ -38,8 +33,8 @@ const customfetch=async (url,{body,...customeConfig})=>{
         console.error('error');
     }
 };
-export const getPosts=(page=1,limit=5)=>{
+export const getPosts=(page=2,limit=10)=>{
     return customfetch(API_URLS.posts(page,limit),{
         method:'GET',
     });
-}
+};
