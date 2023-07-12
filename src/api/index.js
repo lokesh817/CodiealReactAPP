@@ -1,9 +1,9 @@
-import { API_URLS,LocalStorage_Token_Key } from "../utils";
+import { API_URLS, getFormBody,LocalStorage_Token_Key } from "../utils";
 const customfetch=async (url,{body,...customeConfig})=>{
     const token=window.localStorage.getItem(LocalStorage_Token_Key);
     const headers={
-        'content-type':'application/json',
-        Accept:'application/json',
+        'content-type':'application/x-www-form-urlencoded',
+        // Accept:'application/json',
     };
     if(token){
         headers.Authorization=`Bearer ${token}`;
@@ -17,7 +17,7 @@ const customfetch=async (url,{body,...customeConfig})=>{
         // mode:'cors'
     }
     if(body){
-        config.body=JSON.stringify(body);
+        config.body=getFormBody(body)
     }
     try{
         const response=await fetch(url,config);
@@ -31,10 +31,20 @@ const customfetch=async (url,{body,...customeConfig})=>{
         throw new Error(data.message);
     }catch(error){
         console.error('error');
+        return {
+            message:error.message,
+            success:false,
+        };
     }
 };
-export const getPosts=(page=2,limit=10)=>{
+export const getPosts=(page=1,limit=5)=>{
     return customfetch(API_URLS.posts(page,limit),{
         method:'GET',
     });
 };
+export const login=(email,password)=>{
+    return customfetch(API_URLS.login(),{
+        method:'POST',
+        body:{email,password}
+    });
+}
